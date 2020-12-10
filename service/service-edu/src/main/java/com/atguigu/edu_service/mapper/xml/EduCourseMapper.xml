@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.edu_service.mapper.EduCourseMapper">
+    <!--void addCourseIntro(EduCourseIntro eduCourseIntro)-->
+    <insert id="addCourseIntro" parameterType="EduCourseIntro">
+        INSERT INTO edu_course_description(id,description,gmt_create,gmt_modified)
+            VALUES(#{id},#{description},#{gmtCreate},#{gmtModified})
+    </insert>
+
+    <!--void updateCourseIntro(EduCourseIntro eduCourseIntro)-->
+    <update id="updateCourseIntro" parameterType="EduCourseIntro">
+        UPDATE edu_course_description
+            SET description=#{description},gmt_modified=#{gmtModified}
+            WHERE id=#{id}
+    </update>
+
+    <!--EduCourseIntro getCourseIntroById(@Param("courseId") String courseId)-->
+    <select id="getCourseIntroById" parameterType="String" resultType="EduCourseIntro">
+        SELECT * FROM  edu_course_description WHERE id=#{courseId}
+    </select>
+
+    <!--CourseVO getCoursePublishInfo(@Param("courseId") String id)-->
+    <select id="getCoursePublishInfo" parameterType="String" resultType="CourseVO">
+        SELECT ec.title,ec.cover,ec.price,ec.lesson_num AS lessonNum,
+                ec.id,
+                et.name AS teacherName,
+                es1.title AS subjectLevelOne,
+                es2.title AS subjectLevelTwo
+        FROM edu_course ec
+        LEFT JOIN edu_teacher et ON  ec.teacher_id = et.id
+        LEFT JOIN edu_subject es1 ON ec.subject_parent_id = es1.id
+        LEFT JOIN edu_subject es2 ON ec.subject_id = es2.id
+        WHERE ec.id = #{courseId}
+    </select>
+
+    <!--List<CourseVO> getPageByCourseQuery(
+            @Param("current") Long current,
+            @Param("limit") Long limit,
+            @Param("courseQuery") CourseQuery courseQuery)-->
+    <select id="getPageByCourseQuery" resultType="CourseVO">
+        SELECT ec.title,ec.cover,ec.price,ec.lesson_num AS lessonNum,
+        ec.buy_count AS buyCount,ec.gmt_create AS gmtCreate,
+        ec.gmt_modified AS gmtModified,ec.status,
+        ec.view_count AS viewCount,ec.id,
+        et.name AS teacherName,es1.title AS subjectLevelOne,
+        es2.title AS subjectLevelTwo
+        FROM edu_course ec
+        LEFT JOIN edu_teacher et ON ec.teacher_id = et.id
+        LEFT JOIN edu_subject es1 ON ec.subject_parent_id = es1.id
+        LEFT JOIN edu_subject es2 ON ec.subject_id = es2.id
+        <where>
+            <if test="courseQuery.title != null &amp;&amp; courseQuery.title != ''">
+                AND ec.title LIKE "%"#{courseQuery.title}"%"
+            </if>
+            <if test="courseQuery.subjectParentId != null &amp;&amp; courseQuery.subjectParentId != ''">
+                AND ec.subject_parent_id = #{courseQuery.subjectParentId}
+            </if>
+            <if test="courseQuery.subjectId != null &amp;&amp; courseQuery.subjectId != ''">
+                AND ec.subject_id = #{courseQuery.subjectId}
+            </if>
+            <if test="courseQuery.teacherId != null &amp;&amp; courseQuery.teacherId != ''">
+                AND ec.teacher_id = #{courseQuery.teacherId}
+            </if>
+            AND ec.is_deleted = 0
+        </where>
+        LIMIT #{current},#{limit}
+    </select>
+
+    <!--Integer deleteCourseIntroById(String courseId)-->
+    <delete id="deleteCourseIntroById" parameterType="String">
+        DELETE FROM edu_course_description WHERE id = #{value}
+    </delete>
+
+    <!--CourseDetailsWebVO selectCourseDetails(String id)-->
+    <select id="selectCourseDetails" resultType="CourseDetailsWebVO" parameterType="String">
+    SELECT ec.title,ec.cover,ec.price,ec.lesson_num AS lessonNum,
+            ec.buy_count AS buyCount,ec.view_count AS viewCount,ec.id,
+            et.name AS teacherName,et.id AS teacherId,et.avatar,et.career,
+            ecd.description,
+            es1.title AS subjectLevelOne,es1.id AS subjectParentId,
+            es2.title AS subjectLevelTwo,es2.id AS subjectId
+    FROM edu_course ec
+    LEFT JOIN edu_teacher et ON  ec.teacher_id = et.id
+    LEFT JOIN edu_course_description ecd ON ec.id = ecd.id
+    LEFT JOIN edu_subject es1 ON ec.subject_parent_id = es1.id
+    LEFT JOIN edu_subject es2 ON ec.subject_id = es2.id
+    WHERE ec.id = #{id}
+    </select>
+
+</mapper>

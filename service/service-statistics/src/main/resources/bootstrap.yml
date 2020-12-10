@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        prefix: ${spring.application.name}
+        server-addr: 127.0.0.1:8848
+        namespace: 94dd82e0-7408-4d6a-922b-4baa3760c6df
+        ext-config[0]:
+          data-id: redis.yaml
+          refresh: true
+        ext-config[1]:
+          data-id: jdbc.yaml
+          refresh: true
+  profiles:
+    active: dev
+  application:
+    name: service-statistics

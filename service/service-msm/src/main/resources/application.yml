@@ -1,0 +1,97 @@
+####  application-dev.yml
+server:
+  # 服务端口
+  port: 8005
+
+spring:
+  application:
+    # 服务名
+    name: service-msm
+  # 环境设置：dev、test、prod
+  profiles:
+    active: dev
+#  # mysql8以上（spring boot 2.1）
+#  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/guli-edu?serverTimezone=GMT%2B8
+#    username: test
+#    password: 123456
+#    # 连接池相关配置
+#    hikari:
+#      connection-test-query: SELECT 1
+#      # 连接超时时间
+#      connection-timeout: 60000
+#      # 连接空闲超时时间
+#      idle-timeout: 500000
+#      # 最大存活时间
+#      max-lifetime: 540000
+#      # 池中最大连接数
+#      maximum-pool-size: 12
+#      # 允许的最大空闲连接数
+#      minimum-idle: 10
+#      # 连接池名称
+#      pool-name: GuliHikariPool
+  jackson:
+    # json转换日期格式
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  # Redis
+  redis:
+    port: 6379
+    host: 192.168.43.129
+    database: 0
+    timeout: 1800000
+    lettuce:
+      pool:
+        max-active: 20
+        max-wait: 1 #最大阻塞等待时间(负数表示没限制)
+        max-idle: 5
+        min-idle: 0
+  # Nacos
+#  cloud:
+#    nacos:
+#      discovery:
+#        # 服务注册中心地址
+#        server-addr: 127.0.0.1:8848
+
+# mybatis-plus配置
+#mybatis-plus:
+#  configuration:
+#    # mybatis日志
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    # 关闭一级缓存
+#    localCacheScope: STATEMENT
+#  mapper-locations: classpath:/com/atguigu/msm_service/**/*Mapper.xml
+#  # 指定包下的类将以其类型名作为别名
+#  typeAliasesPackage: com.atguigu.msm_service.entity
+#  global-config:
+#    # 数据库配置
+#    db-config:
+#      # 逻辑1表示已删除true
+#      logic-delete-value: 1
+#      # 逻辑0表示未删除false
+#      logic-not-delete-value: 0
+
+# 默认情况下，spring boot从控制台打印出来的日志级别只有INFO及以上级别，可以配置日志级别
+#logging:
+#  level: warn
+
+# feign配置
+#feign:
+#  hystrix:
+#    enabled: true # 开启feign的熔断器
+#
+#ribbon:
+#  #请求处理的超时时间，30秒
+#  ReadTimeout: 30000
+#
+## 熔断器配置
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            # 设置hystrix超时时间，默认1000ms
+#            timeoutInMilliseconds: 6000
